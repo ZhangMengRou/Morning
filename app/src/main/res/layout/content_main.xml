@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:showIn="@layout/app_bar_main"
+    android:background="@color/colorWhite"
+    tools:context="com.example.administrator.morning.MainActivity">
+
+    <TextView
+        android:text="今日打卡话题"
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+    <TextView
+        android:text="#一句话证明今天很冷"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/textView2" />
+
+
+
+
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:hint="#一句话证明今天很冷"
+        android:textSize="13sp"
+        android:layout_marginLeft="2dp"
+        android:textCursorDrawable="@null"
+        android:background="@drawable/writeshape"
+        android:id="@+id/editText2"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/send"
+        android:layout_toStartOf="@+id/send"
+        android:layout_marginBottom="6dp" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:id="@+id/send"
+        android:background="@drawable/bn_selector"
+        android:text="打卡"
+        android:textColor="@color/colorMain"
+        android:layout_marginLeft="2dp"
+        android:layout_alignTop="@+id/editText2"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:background="@null"
+        android:layout_height="wrap_content"
+        android:id="@+id/listView"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/textView2"
+        android:layout_above="@+id/editText2"
+        android:scrollbars="none"
+        android:divider="#00000000"
+        android:listSelector="#00000000"
+        android:dividerHeight="0dp"/>
+
+
+</RelativeLayout>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite">
+
+    <View
+        android:id="@+id/top_line"
+        android:layout_width="2dp"
+        android:layout_height="35dp"
+        android:layout_marginLeft="20dp"
+        android:background="#cccccc" />
+
+    <ImageView
+        android:id="@+id/img_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/top_line"
+        android:layout_marginLeft="8dp"
+        android:src="@drawable/timeline_green" />
+    <TextView
+        android:id="@+id/num"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:text="1"
+        android:textColor="@color/colorWhite"
+        android:paddingTop="8dp"
+        android:textSize="11sp"
+        android:layout_below="@+id/top_line"
+        android:layout_alignLeft="@+id/top_line"
+        android:layout_alignStart="@+id/top_line" />
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:src="@drawable/nothing"
+        android:layout_alignTop="@+id/img_icon"
+        android:layout_toRightOf="@+id/img_icon"
+        android:layout_toEndOf="@+id/img_icon" />
+
+
+    <View
+        android:id="@+id/bottom_line"
+        android:layout_width="2dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/img_icon"
+        android:layout_marginLeft="20dp"
+        android:background="#cccccc" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/timeline_content"
+        android:orientation="horizontal"
+        android:layout_alignTop="@+id/icon"
+        android:layout_toRightOf="@+id/icon"
+        android:layout_toEndOf="@+id/icon">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="0dp"
+            android:layout_weight="6"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_gravity="center_vertical"
+            android:text="所包含的内容" />
+
+    </LinearLayout>
+
+</RelativeLayout>
