@@ -13,6 +13,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -70,7 +71,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -167,10 +167,9 @@ public class MainActivity extends AppCompatActivity
 
           }
     public void dialogShow(View v){
-        qq_num=new EditText(this);
         NiftyDialogBuilder dialogBuilder = NiftyDialogBuilder.getInstance(this);
-
         effect = Effectstype.Slideleft;
+        final View view = View.inflate(v.getContext(), R.layout.custom_view, null);
        // Toast.makeText(v.getContext(), "i'm btn1", Toast.LENGTH_SHORT).show();
         dialogBuilder
                 .withTitle("登录")                                  //.withTitle(null)  no title
@@ -185,10 +184,11 @@ public class MainActivity extends AppCompatActivity
                 .withEffect(effect)                                         //def Effectstype.Slidetop
                 .withButton1Text("确定")                                      //def gone
                 .withButton2Text("取消")                                  //def gone
-                .setCustomView(R.layout.custom_view, v.getContext())         //.setCustomView(View or ResId,context)
+                .setCustomView(view, v.getContext())         //.setCustomView(View or ResId,context)
                 .setButton1Click(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        //qq_num = (EditText) findViewById(R.id.write_qq_number);
                         try {
 
                             new Thread(new Runnable() {
@@ -200,6 +200,12 @@ public class MainActivity extends AppCompatActivity
 
                                        // QQ=qq_num.getText().toString();
                                       //  System.out.println(QQ);
+                                        qq_num = (EditText) view.findViewById(R.id.write_qq_number);
+                                        if(qq_num == null) System.out.println("null");
+
+                                        QQ = qq_num.getText().toString();
+                                        System.out.println(QQ);
+
                                         GetIcon = new GetIcon();
                                         GetIcon.start();
 
