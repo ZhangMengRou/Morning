@@ -3,7 +3,6 @@ package com.example.administrator.morning;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -13,7 +12,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,20 +21,16 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.administrator.morning.aboutuser.BasemsgToBmob;
 import com.example.administrator.morning.com.example.administrator.util.NetworkUtil;
 import com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype;
 import com.gitonway.lee.niftymodaldialogeffects.lib.NiftyDialogBuilder;
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,11 +53,9 @@ public class MainActivity extends AppCompatActivity
     private Effectstype effect;//对话框的飞入形式
     public OkHttpClient client = new OkHttpClient();//网络获取
     private CircleImageView ic;
-    public String name;
+    public String name_;
     private File file;
-    private String QQ="185761855";
-    private Bitmap bitmap;
-    private Thread GetIcon,GetName;
+    private String QQ="915849243";
     public EditText qq_num;
 
     @Override
@@ -168,7 +160,7 @@ public class MainActivity extends AppCompatActivity
 
           }
     public void dialogShow(View v){
-        NiftyDialogBuilder dialogBuilder = NiftyDialogBuilder.getInstance(this);
+        final NiftyDialogBuilder dialogBuilder = NiftyDialogBuilder.getInstance(this);
         effect = Effectstype.Slideleft;
         final View view = View.inflate(v.getContext(), R.layout.custom_view, null);
        // Toast.makeText(v.getContext(), "i'm btn1", Toast.LENGTH_SHORT).show();
@@ -181,6 +173,7 @@ public class MainActivity extends AppCompatActivity
                 .withDialogColor("#aec9c9")                               //def  | withDialogColor(int resid)                               //def
                 .withIcon(R.drawable.trash)
                 .isCancelableOnTouchOutside(true)                           //def    | isCancelable(true)
+              //  .isCancelable(true)
                 .withDuration(700)                                          //def
                 .withEffect(effect)                                         //def Effectstype.Slidetop
                 .withButton1Text("确定")                                      //def gone
@@ -216,7 +209,7 @@ public class MainActivity extends AppCompatActivity
                                         msg.setData(bundle);
                                         handler.sendMessage(msg);
                                         //保存图片
-                                        saveBitmapFile(header);
+                                        saveBitmapFile(header,view);
 
                                     } catch (Exception e) {
                                         e.printStackTrace();
@@ -228,26 +221,34 @@ public class MainActivity extends AppCompatActivity
                         } catch (NumberFormatException e) {
                             e.printStackTrace();
                         }
+                        dialogBuilder.dismiss();
                     }
+
                 })
                 .setButton2Click(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(v.getContext(), "i'm btn2", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(v.getContext(), "取消", Toast.LENGTH_SHORT).show();
+                        dialogBuilder.dismiss();
                     }
                 })
                 .show();
     }
 
 
-    public void saveBitmapFile(Bitmap bitmap){
-        file=new File("/sdcard/" + "01.jpg");//将要保存图片的路径
+    public void saveBitmapFile(Bitmap bitmap,View view){
+        file=new File("/sdcard/" + "/Morning/pic/");//将要保存图片的路径
         try {
-            if(file.exists()) file.createNewFile();
-            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+            file.mkdirs();
+            File f=new File(file.getPath()+"/head.png");
+            System.out.print("11111  "+f+"");
+           // if(f.exists())
+            f.createNewFile();
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(f));
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
             bos.flush();
             bos.close();
+            new BasemsgToBmob().sendmsg(name_,QQ,view);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -261,6 +262,7 @@ public class MainActivity extends AppCompatActivity
             switch (msg.what) {
                 case 0x1001:
                     Bundle data = msg.getData();
+                    name_=(String) data.get("name");
                     String name = (String) data.get("name");
                     Bitmap header = (Bitmap) data.get("header");
                     login=(TextView) findViewById(R.id.text_login);
