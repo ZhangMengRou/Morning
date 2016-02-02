@@ -23,6 +23,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.administrator.morning.com.example.administrator.util.NetworkUtil;
 import com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype;
 import com.gitonway.lee.niftymodaldialogeffects.lib.NiftyDialogBuilder;
 import com.squareup.okhttp.Call;
@@ -196,22 +197,26 @@ public class MainActivity extends AppCompatActivity
                                 public void run() {
                                     try {
 
-                                       // qq_num=(EditText)findViewById(R.id.write_qq_number);
-
-                                       // QQ=qq_num.getText().toString();
-                                      //  System.out.println(QQ);
                                         qq_num = (EditText) view.findViewById(R.id.write_qq_number);
                                         if(qq_num == null) System.out.println("null");
 
                                         QQ = qq_num.getText().toString();
                                         System.out.println(QQ);
 
-                                        GetIcon = new GetIcon();
-                                        GetIcon.start();
+                                        //获取名称
+                                        String name = new NetworkUtil().get_QQ_Name(QQ);
+                                        //获取图片
+                                        Bitmap header = new NetworkUtil().get_QQ_Header(QQ);
+                                        Bundle bundle = new Bundle();
+                                        bundle.putString("name", name);
+                                        bundle.putParcelable("header", header);
 
-                                        GetName = new GetName();
-                                        GetName.start();
-
+                                        Message msg = new Message();
+                                        msg.what = 0x1001;
+                                        msg.setData(bundle);
+                                        handler.sendMessage(msg);
+                                        //保存图片
+                                        saveBitmapFile(header);
 
                                     } catch (Exception e) {
                                         e.printStackTrace();
@@ -223,7 +228,6 @@ public class MainActivity extends AppCompatActivity
                         } catch (NumberFormatException e) {
                             e.printStackTrace();
                         }
-                        //Toast.makeText(v.getContext(), "i'm btn1", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setButton2Click(new View.OnClickListener() {
@@ -237,8 +241,9 @@ public class MainActivity extends AppCompatActivity
 
 
     public void saveBitmapFile(Bitmap bitmap){
-        file=new File("/morning/pic/01.jpg");//将要保存图片的路径
+        file=new File("/sdcard/" + "01.jpg");//将要保存图片的路径
         try {
+            if(file.exists()) file.createNewFile();
             BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
             bos.flush();
@@ -248,161 +253,24 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    //获得头像
-    private class GetIcon extends Thread{
-
-        @Override
-        public void run() {
-            // TODO Auto-generated method stub
-            try {
-
-                //返回头像
-                Request request = new Request.Builder()
-                        .url("http://q2.qlogo.cn/headimg_dl?bs="+QQ+"&dst_uin=" +QQ+
-                                "&dst_uin="+QQ+"&dst_uin=" +QQ+
-                                "&spec=100&url_enc=0&referer=bu_interface&term_type=PC")
-                        // .url(" http://img2.5sing.kgimg.com/force/T1HwJ5BybT1RXrhCrK_100_100.jpg")
-                        .build();
-                Response response;
-                try {
-                    response = client.newCall(request).execute();
-
-                    InputStream icon=response.body().byteStream();
-                    bitmap= BitmapFactory.decodeStream(icon);
-                    Message msg2 = new Message() ;
-                    msg2.what = 1;
-                    msg2.obj = bitmap;
-                    handler.sendMessage(msg2);
-
-                } catch (Exception e) {
-
-                    Message msg3 = new Message() ;
-                    msg3.what = 3;
-                    handler.sendMessage(msg3);
-
-                    e.printStackTrace();
-                }
-            } catch (Exception e) {
-                // TODO: handle exception
-            }
-        }
-    }
-    //获得昵称
-    private class GetName extends Thread{
-        @Override
-        public void run() {
-            // TODO Auto-generated method stub
-            try {
-                Request request2 = new Request.Builder()
-                        .url("http://users.qzone.qq.com/fcg-bin/cgi_get_portrait.fcg?uins="+QQ)
-                        .get().build();
-                Call call = client.newCall(request2);
-                call.enqueue(new Callback() {
-
-                    public void onResponse(Response response) throws IOException {
-                        byte[] bbb = response.body().bytes();
-                        //for(byte b : bbb) System.out.print(b + " ");
-                        //   System.out.println();
-                        String s = new String(bbb, "GBK");
-                        // System.out.println(s);
-                        String[] str = s.split("\"");
-                        String it = str[5];
-                        name = it;
-                       // System.out.println(name);
-
-                    }
-
-                    public void onFailure(Request arg0, IOException arg1) {
-
-                        Message msg3 = new Message();
-                        msg3.what = 3;
-                        handler.sendMessage(msg3);
-                    }
-                });
-                Message msg2 = new Message();
-                msg2.what = 2;
-                msg2.obj = name;
-                handler.sendMessage(msg2);
-
-            } catch (Exception e) {
-                // TODO: handle exception
-            }
-        }
-    }
 
     @SuppressLint("HandlerLeak")
-    //处理获得信息的消息
     private Handler handler = new Handler(){
-
         @Override
         public void handleMessage(Message msg) {
-            // TODO Auto-generated method stub
             switch (msg.what) {
-                case 1:
-                    bitmap = (Bitmap) msg.obj;
-                    if(bitmap != null){
-                        Message msgg = new Message() ;
-                        msgg.what = 4;
-                        _handler.sendMessage(msgg);
-
-                    }
-                    break;
-                case 2:
-                    name = (String) msg.obj;
-                    if(name != null){
-                        Message msgg = new Message() ;
-                        msgg.what = 4;
-                        _handler.sendMessage(msgg);
-
-                    }
-                    break;
-                default:
-                    Toast.makeText(MainActivity.this, "解析错误", Toast.LENGTH_SHORT).show();
-                    break;
-
-            }
-        }
-
-    };
-    //处理子线程结束后发出的消息
-    @SuppressLint("HandlerLeak")
-    private Handler _handler = new Handler(){
-
-
-        @Override
-        public void handleMessage(Message msg) {
-            // TODO Auto-generated method stub
-            switch (msg.what){
-                case 4:
+                case 0x1001:
+                    Bundle data = msg.getData();
+                    String name = (String) data.get("name");
+                    Bitmap header = (Bitmap) data.get("header");
                     login=(TextView) findViewById(R.id.text_login);
                     login.setText(name);
                     ic=(CircleImageView) findViewById(R.id.ic);//不放这里会报空指针异常。。汪
-                    ic.setImageBitmap(bitmap);
-
-                   /* mUser p0 = new mUser();
-                    //      saveBitmapFile(bitmap);
-                    //BmobFile file1=new BmobFile(new File("/morning/pic/01.jpg"));
-                    //  p0.setPic(file1);
-                    p0.setQq_number(QQ);
-                    p0.setUser_name(name);
-                    p0.save(MainActivity.this, new SaveListener() {
-                        @Override
-                        public void onSuccess() {
-                            // TODO Auto-generated method stub
-                            System.out.println("succeed");
-                            //toast("添加数据成功，返回objectId为："+p2.getObjectId());
-                        }
-
-                        @Override
-                        public void onFailure(int code, String msg) {
-                            // TODO Auto-generated method stub
-                            System.out.println("fail " + msg);
-                            //toast("创建数据失败：" + msg);
-                        }
-                    });*/
-                    break;
+                    ic.setImageBitmap(header);
             }
         }
-
     };
+
+
+
 }
