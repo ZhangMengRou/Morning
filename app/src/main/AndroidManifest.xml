@@ -42,6 +42,10 @@
             android:label="抽奖序号"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <activity android:name=".Calendar.CalendarActivity"
+            android:label="日历"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

@@ -21,6 +21,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.administrator.morning.Calendar.CalendarActivity;
 import com.example.administrator.morning.aboutuser.BasemsgToBmob;
 import com.example.administrator.morning.com.example.administrator.util.NetworkUtil;
 import com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype;
@@ -131,7 +132,8 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.clock_in_record) {
-            Intent intent0 = new Intent(this, ClockInRecord.class);
+        //    Intent intent0 = new Intent(this, ClockInRecord.class);
+            Intent intent0 = new Intent(this, CalendarActivity.class);
             this.startActivity(intent0);
         } else if (id == R.id.serial_number) {
             Intent intent1 = new Intent(this, SerialNumber.class);
