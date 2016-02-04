@@ -1,8 +1,12 @@
 package com.example.administrator.morning;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -58,6 +62,12 @@ public class MainActivity extends AppCompatActivity
     private File file;
     private String QQ="915849243";
     public EditText qq_num;
+    private NetworkInfo networkInfo;
+    private ConnectivityManager manager;
+
+    private SharedPreferences sharedPreference;
+    private SharedPreferences.Editor editor;
+   // private Boolean is_login=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -185,43 +195,51 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onClick(View v) {
                         //qq_num = (EditText) findViewById(R.id.write_qq_number);
-                        try {
 
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
+                        manager = (ConnectivityManager) MainActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
+                        networkInfo = manager.getActiveNetworkInfo();
 
-                                        qq_num = (EditText) view.findViewById(R.id.write_qq_number);
-                                        if(qq_num == null) System.out.println("null");
+                        if (networkInfo == null || !networkInfo.isAvailable()) {
+                            Toast.makeText(MainActivity.this, "网络似乎出了点问题哦", Toast.LENGTH_SHORT).show();
+                        } else {
+                            try {
 
-                                        QQ = qq_num.getText().toString();
-                                        System.out.println(QQ);
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
 
-                                        //获取名称
-                                        String name = new NetworkUtil().get_QQ_Name(QQ);
-                                        //获取图片
-                                        Bitmap header = new NetworkUtil().get_QQ_Header(QQ);
-                                        Bundle bundle = new Bundle();
-                                        bundle.putString("name", name);
-                                        bundle.putParcelable("header", header);
+                                            qq_num = (EditText) view.findViewById(R.id.write_qq_number);
+                                            if (qq_num == null) System.out.println("null");
 
-                                        Message msg = new Message();
-                                        msg.what = 0x1001;
-                                        msg.setData(bundle);
-                                        handler.sendMessage(msg);
-                                        //保存图片
-                                        saveBitmapFile(header,view);
+                                            QQ = qq_num.getText().toString();
+                                            System.out.println(QQ);
 
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
+                                            //获取名称
+                                            String name = new NetworkUtil().get_QQ_Name(QQ);
+                                            //获取图片
+                                            Bitmap header = new NetworkUtil().get_QQ_Header(QQ);
+                                            Bundle bundle = new Bundle();
+                                            bundle.putString("name", name);
+                                            bundle.putParcelable("header", header);
+
+                                            Message msg = new Message();
+                                            msg.what = 0x1001;
+                                            msg.setData(bundle);
+                                            handler.sendMessage(msg);
+                                            //保存图片
+                                            saveBitmapFile(header, view);
+
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
                                     }
-                                }
-                            }).start();
+                                }).start();
 
 
-                        } catch (NumberFormatException e) {
-                            e.printStackTrace();
+                            } catch (NumberFormatException e) {
+                                e.printStackTrace();
+                            }
                         }
                         dialogBuilder.dismiss();
                     }
@@ -250,6 +268,10 @@ public class MainActivity extends AppCompatActivity
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
             bos.flush();
             bos.close();
+            /*editor = sharedPreference.edit();
+            editor.putBoolean("is_login", true);
+            editor.clear();
+            editor.commit();*/
             new BasemsgToBmob().sendmsg(name_,QQ,view);
         } catch (IOException e) {
             e.printStackTrace();
