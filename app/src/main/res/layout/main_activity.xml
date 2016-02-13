@@ -1,0 +1,191 @@
+<com.example.administrator.morning.mainview.DragLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dl"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/side_nav_bar" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="30dp"
+        android:paddingLeft="30dp"
+        android:paddingTop="50dp" >
+
+        <LinearLayout
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/iv_bottom"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:src="@drawable/nothing"
+                app:civ_border_width="1dp"
+                app:civ_border_color="@color/colorWhite"/>
+
+            <TextView
+                android:id="@+id/text_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="20dp"
+                android:text="@string/un_login"
+                android:textColor="@color/colorGreen"
+                android:textSize="15sp" />
+
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/us"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:text="@string/feidian"
+            android:textColor="#050505"
+            android:textSize="15sp" />
+
+
+        <ListView
+            android:id="@+id/lv"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/us"
+            android:layout_below="@id/name"
+            android:layout_marginBottom="30dp"
+            android:layout_marginTop="20dp"
+            android:cacheColorHint="#00000000"
+            android:listSelector="@color/colorMain"
+            android:divider="@null"
+            android:textColor="#ffffff" />
+    </RelativeLayout>
+
+    <com.example.administrator.morning.mainview.MyRelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#eeeeee" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+
+            android:orientation="vertical"
+            android:padding="5dp"
+            >
+
+            <RelativeLayout
+                android:id="@+id/rl_title"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:background="@color/colorMain" >
+                <ImageView
+                    android:id="@+id/iv_icon"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/nothing" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="早起助手"
+                    android:textColor="#ffffff"
+                    android:textSize="20sp" />
+
+                <ImageView
+                    android:id="@+id/add"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignTop="@+id/iv_icon"
+                    android:layout_marginRight="5dp"
+                    android:scaleType="centerCrop"
+                     />
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:background="@color/colorWhite"
+               >
+
+                <TextView
+                    android:text="今日打卡话题"
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true" />
+                <TextView
+                    android:text="#一句话证明今天很冷"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/title"
+                    android:layout_centerHorizontal="true"
+                    android:id="@+id/textView2" />
+
+
+
+
+                <EditText
+                    android:layout_width="300dp"
+                    android:layout_height="40dp"
+                    android:hint="#一句话证明今天很冷"
+                    android:textSize="13sp"
+                    android:layout_marginLeft="2dp"
+                    android:textCursorDrawable="@null"
+                    android:background="@drawable/writeshape"
+                    android:id="@+id/editText2"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toLeftOf="@+id/send"
+                    android:layout_toStartOf="@+id/send"
+                    android:layout_marginBottom="6dp" />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:id="@+id/send"
+                    android:background="@drawable/bn_selector"
+                    android:text="打卡"
+                    android:textColor="@color/colorMain"
+                    android:layout_marginLeft="2dp"
+                    android:layout_alignTop="@+id/editText2"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true" />
+
+                <ListView
+                    android:layout_width="wrap_content"
+                    android:background="@null"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/listView"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@+id/textView2"
+                    android:layout_above="@+id/editText2"
+                    android:scrollbars="none"
+                    android:divider="#00000000"
+                    android:listSelector="#00000000"
+                    android:dividerHeight="0dp"/>
+
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+    </com.example.administrator.morning.mainview.MyRelativeLayout>
+
+
+
+</com.example.administrator.morning.mainview.DragLayout>
