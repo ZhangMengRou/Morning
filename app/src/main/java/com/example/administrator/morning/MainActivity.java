@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -69,6 +70,7 @@ public class MainActivity extends Activity{
     private Effectstype effect;//对话框的飞入形式
     public OkHttpClient client = new OkHttpClient();//网络获取
     private CircleImageView ic;
+    private CircleImageView icm;
     public String name_;
     private File file;
     private String QQ="915849243";
@@ -80,6 +82,8 @@ public class MainActivity extends Activity{
     private SharedPreferences.Editor editor;
     private Boolean is_login_is=false;
     private Button send;
+
+    private String path ="/sdcard/Morning/pic/head.png";
 
 
     @Override
@@ -107,6 +111,13 @@ public class MainActivity extends Activity{
         adapter = new SimpleAdapter(this, list, R.layout.mainlistview_adapter,
                 new String[] { "title" ,"num"}, new int[] { R.id.title ,R.id.num});
         listView.setAdapter(adapter);
+        boolean isRemember = sharedPreference.getBoolean("is_login", false);
+        if (isRemember) {
+
+            Message msg = new Message();
+            msg.what = 1;
+            usu_handler.sendMessage(msg);
+        }
     }
 
     private void initDragLayout() {
@@ -158,19 +169,19 @@ public class MainActivity extends Activity{
                         // Intent intent0 = new Intent(ClockInRecord.this, ClockInRecord.class);
                         Intent intent0 = new Intent(MainActivity.this, CalendarActivity.class);
                         MainActivity.this.startActivity(intent0);
-                        Toast.makeText(MainActivity.this,""+position,Toast.LENGTH_LONG).show();
+                       // Toast.makeText(MainActivity.this,""+position,Toast.LENGTH_LONG).show();
                         break;
                     case 1:
                         Intent intent1 = new Intent(MainActivity.this, SerialNumber.class);
                         MainActivity.this.startActivity(intent1);
-                        Toast.makeText(MainActivity.this,""+position,Toast.LENGTH_LONG).show();
+                       // Toast.makeText(MainActivity.this,""+position,Toast.LENGTH_LONG).show();
 
                         break;
                     case 2:
 
                         Intent intent2 = new Intent(MainActivity.this, WinningRecord.class);
                         MainActivity.this.startActivity(intent2);
-                        Toast.makeText(MainActivity.this,""+position,Toast.LENGTH_LONG).show();
+                       // Toast.makeText(MainActivity.this,""+position,Toast.LENGTH_LONG).show();
 
                         break;
                     case 3:
@@ -317,6 +328,13 @@ public class MainActivity extends Activity{
                     login.setText(name);
                     ic=(CircleImageView) findViewById(R.id.iv_bottom);//不放这里会报空指针异常。。汪
                     ic.setImageBitmap(header);
+                    icm=(CircleImageView) findViewById(R.id.iv_icon);
+                    icm.setImageBitmap(header);
+                    editor = sharedPreference.edit();
+                    editor.putBoolean("is_login", true);
+                    editor.putString("name", name);
+                    editor.putString("qq", QQ);
+                    editor.commit();
             }
         }
     };
@@ -329,6 +347,11 @@ public class MainActivity extends Activity{
                     login=(TextView) findViewById(R.id.text_login);
                     name_=sharedPreference.getString("name","11111");
                     login.setText(name_);
+                    Bitmap bitmap= BitmapFactory.decodeFile(path);
+                    ic=(CircleImageView) findViewById(R.id.iv_bottom);
+                    ic.setImageBitmap(bitmap);
+                    icm=(CircleImageView) findViewById(R.id.iv_icon);
+                    icm.setImageBitmap(bitmap);
                     break;
                 case 2:
                     break;
