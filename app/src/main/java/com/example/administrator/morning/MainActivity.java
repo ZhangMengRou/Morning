@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import com.example.administrator.morning.Calendar.CalendarActivity;
 import com.example.administrator.morning.aboutuser.BasemsgToBmob;
+import com.example.administrator.morning.allmes.ThingsToBmob;
 import com.example.administrator.morning.com.example.administrator.util.NetworkUtil;
 import com.example.administrator.morning.mainview.DragLayout;
 import com.example.administrator.morning.mainview.DragLayout.DragListener;
@@ -82,6 +83,7 @@ public class MainActivity extends Activity{
     private SharedPreferences.Editor editor;
     private Boolean is_login_is=false;
     private Button send;
+    private EditText things_send;
 
     private String path ="/sdcard/Morning/pic/head.png";
 
@@ -96,6 +98,7 @@ public class MainActivity extends Activity{
         sharedPreference = PreferenceManager.getDefaultSharedPreferences(this);
 
 
+        things_send= (EditText)findViewById(R.id.things_send);
         send=(Button)findViewById(R.id.send);
 
 
@@ -118,6 +121,14 @@ public class MainActivity extends Activity{
             msg.what = 1;
             usu_handler.sendMessage(msg);
         }
+        send.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                String things=things_send.getText().toString();
+                String qq=sharedPreference.getString("qq", "0000");
+                new ThingsToBmob().sendmsg(things,qq,arg0);
+            }
+        });
     }
 
     private void initDragLayout() {
@@ -305,6 +316,7 @@ public class MainActivity extends Activity{
             editor = sharedPreference.edit();
             editor.putBoolean("is_login", true);
             editor.putString("name",name_);
+            editor.putString("qq",QQ);
             editor.clear();
             editor.commit();
             new BasemsgToBmob().sendmsg(name_,QQ,view);
