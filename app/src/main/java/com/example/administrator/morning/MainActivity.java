@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import com.example.administrator.morning.Calendar.CalendarActivity;
 import com.example.administrator.morning.aboutuser.BasemsgToBmob;
+import com.example.administrator.morning.allmes.CardMark;
 import com.example.administrator.morning.allmes.ThingsToBmob;
 import com.example.administrator.morning.com.example.administrator.util.NetworkUtil;
 import com.example.administrator.morning.mainview.DragLayout;
@@ -36,6 +37,8 @@ import com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype;
 import com.gitonway.lee.niftymodaldialogeffects.lib.NiftyDialogBuilder;
 import com.nineoldandroids.view.ViewHelper;
 import com.squareup.okhttp.OkHttpClient;
+
+import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -48,6 +51,8 @@ import java.util.Map;
 import java.util.Random;
 
 import cn.bmob.v3.Bmob;
+import cn.bmob.v3.BmobRealTimeData;
+import cn.bmob.v3.listener.ValueEventListener;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -84,6 +89,8 @@ public class MainActivity extends Activity{
     private Boolean is_login_is=false;
     private Button send;
     private EditText things_send;
+    List<CardMark> messages = new ArrayList<CardMark>();
+    BmobRealTimeData data = new BmobRealTimeData();
 
     private String path ="/sdcard/Morning/pic/head.png";
 
@@ -127,6 +134,35 @@ public class MainActivity extends Activity{
                 String things=things_send.getText().toString();
                 String qq=sharedPreference.getString("qq", "0000");
                 new ThingsToBmob().sendmsg(things,qq,arg0);
+                things_send.setText("");
+            }
+        });
+        init();
+    }
+
+    private void init(){
+      //  Bmob.initialize(this, "你的appkey");
+        data.start(this, new ValueEventListener() {
+
+            @Override
+            public void onDataChange(JSONObject arg0) {
+                // TODO Auto-generated method stub
+                if(BmobRealTimeData.ACTION_UPDATETABLE.equals(arg0.optString("action"))){
+                    JSONObject data = arg0.optJSONObject("data");
+                   // messages.add(new CardMark(data.optString("name"), data.optString("content")));
+                   // adapter.notifyDataSetChanged();
+                    Toast.makeText(MainActivity.this,data.toString(),Toast.LENGTH_LONG).show();
+                }
+
+            }
+
+            @Override
+            public void onConnectCompleted() {
+                // TODO Auto-generated method stub
+                if(data.isConnected()){
+                    data.subTableUpdate("CardMark");
+                    System.out.print("card mark yes");
+                }
             }
         });
     }
