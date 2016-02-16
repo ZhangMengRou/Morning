@@ -1,12 +1,14 @@
 package com.example.administrator.morning.allmes;
 
+import com.example.administrator.morning.aboutuser.mUser;
+
 import cn.bmob.v3.BmobObject;
 
 /**
  * Created by Administrator on 2016/2/7.
  */
 public class CardMark extends BmobObject{
-    private String qq_number;
+    private mUser user;
     private String content;
 
     public String getContent() {
@@ -17,12 +19,12 @@ public class CardMark extends BmobObject{
         this.content = con;
     }
 
-    public String getQq_number() {
-        return qq_number;
+    public mUser getUser() {
+        return user;
     }
 
-    public void setQq_number(String qq_numbere) {
-        this.qq_number = qq_numbere;
+    public void setUser(mUser user) {
+        this.user = user;
     }
 
 

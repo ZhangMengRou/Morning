@@ -2,6 +2,8 @@ package com.example.administrator.morning.allmes;
 
 import android.view.View;
 
+import com.example.administrator.morning.aboutuser.mUser;
+
 import cn.bmob.v3.listener.SaveListener;
 
 /**
@@ -11,14 +13,14 @@ public class ThingsToBmob {
 
     private String path ="/sdcard/Morning/pic/head.png";
     private String QQ_b;
-    private String name_b;
+    private mUser v_user;
     private View v_b;
     private String things_b;
 
-    public boolean sendmsg(String things, String QQ, View v)
+    public boolean sendmsg(String things, mUser user, View v)
     {
         things_b=things;
-        QQ_b=QQ;
+        v_user=user;
         v_b=v;
         send_things(v_b);
         return true;
@@ -27,7 +29,7 @@ public class ThingsToBmob {
     {
         final CardMark things = new CardMark();
         things.setContent(things_b);
-        things.setQq_number(QQ_b);
+        things.setUser(v_user);
         things.save(v_b.getContext(), new SaveListener() {
             @Override
             public void onSuccess() {

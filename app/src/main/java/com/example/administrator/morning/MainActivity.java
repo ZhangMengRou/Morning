@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.example.administrator.morning.Calendar.CalendarActivity;
 import com.example.administrator.morning.aboutuser.BasemsgToBmob;
+import com.example.administrator.morning.aboutuser.mUser;
 import com.example.administrator.morning.allmes.CardMark;
 import com.example.administrator.morning.allmes.ThingsToBmob;
 import com.example.administrator.morning.com.example.administrator.util.NetworkUtil;
@@ -53,7 +54,10 @@ import java.util.Map;
 import java.util.Random;
 
 import cn.bmob.v3.Bmob;
+import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobRealTimeData;
+import cn.bmob.v3.datatype.BmobFile;
+import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.ValueEventListener;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -135,8 +139,49 @@ public class MainActivity extends Activity{
             public void onClick(View arg0) {
                 String things=things_send.getText().toString();
                 String qq=sharedPreference.getString("qq", "0000");
-                new ThingsToBmob().sendmsg(things,qq,arg0);
+               // mUser user= new mUser();
+
+
+                final mUser user= new mUser();
+
+                user.setQq_number(qq);
+                BmobQuery<mUser> query = new BmobQuery<mUser>();
+
+                query.addWhereEqualTo("qq_number", qq);
+
+                query.setLimit(1);
+
+                query.findObjects(MainActivity.this, new FindListener<mUser>() {
+                    @Override
+                    public void onSuccess(List<mUser> object) {
+                        // TODO Auto-generated method stub
+                        BmobFile b=null;
+                        String a=null;
+                        String c=null;
+                        //Toast.makeText(MainActivity.this,"查询成功：共"+object.size()+"条数据。",Toast.LENGTH_LONG).show();
+                        for (mUser it : object) {
+                            //
+                            a=it.getUser_name();
+                            b=it.getPic();
+                            //获得数据的objectId信息
+                            c=it.getObjectId();
+                            //获得createdAt数据创建时间（注意是：createdAt，不是createAt）
+                            it.getCreatedAt();
+                        }
+                        user.setUser_name(a);
+                        user.setPic(b);
+                        user.setObjectId(c);
+
+                    }
+                    @Override
+                    public void onError(int code, String msg) {
+                        // TODO Auto-generated method stub
+                        //toast("查询失败："+msg);
+                    }
+                });
+                new ThingsToBmob().sendmsg(things,user,arg0);
                 things_send.setText("");
+
             }
         });
         init();
@@ -152,8 +197,46 @@ public class MainActivity extends Activity{
                 if(BmobRealTimeData.ACTION_UPDATETABLE.equals(arg0.optString("action"))){
                     JSONObject data = arg0.optJSONObject("data");
                     CardMark things = new CardMark();
+                    final mUser user= new mUser();
+
+                    user.setQq_number(data.optString("qq_number"));
+                    BmobQuery<mUser> query = new BmobQuery<mUser>();
+
+                    query.addWhereEqualTo("qq_number", data.optString("qq_number"));
+
+                    query.setLimit(1);
+
+                    query.findObjects(MainActivity.this, new FindListener<mUser>() {
+                        @Override
+                        public void onSuccess(List<mUser> object) {
+                            // TODO Auto-generated method stub
+                            BmobFile b=null;
+                            String a=null;
+                            String c=null;
+                           //Toast.makeText(MainActivity.this,"查询成功：共"+object.size()+"条数据。",Toast.LENGTH_LONG).show();
+                            for (mUser it : object) {
+                                //
+                                a=it.getUser_name();
+                                b=it.getPic();
+                                //获得数据的objectId信息
+                                c=it.getObjectId();
+                                //获得createdAt数据创建时间（注意是：createdAt，不是createAt）
+                                it.getCreatedAt();
+                            }
+                            user.setUser_name(a);
+                            user.setPic(b);
+                            user.setObjectId(c);
+
+                        }
+                        @Override
+                        public void onError(int code, String msg) {
+                            // TODO Auto-generated method stub
+                            //toast("查询失败："+msg);
+                        }
+                    });
+
                     things.setContent(data.optString("content"));
-                    things.setQq_number(data.optString("qq_number"));
+                    things.setUser(user);
                     messages.add(things);
                     adapter.notifyDataSetChanged();
                    // Toast.makeText(MainActivity.this,data.toString(),Toast.LENGTH_LONG).show();
