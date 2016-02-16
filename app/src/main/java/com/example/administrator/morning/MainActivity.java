@@ -13,16 +13,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,10 +70,10 @@ public class MainActivity extends Activity{
     private List<HashMap<String, Object>> mData;
 
     private ListView listView = null;
-    private SimpleAdapter adapter = null;
+    private MyAdapter adapter = null;
     private List<Map<String, String>> list = new ArrayList<Map<String, String>>();
     private String[] title = {"#冻成狗了111","#冻成狗了2222222222","#冻成狗了","测试数据11111","测试数据2","测试数据3"};
-    private String[] num ={"1","2","3","4","5","6"};
+    public int[] number =new int[1010];
     private TextView login;
     private Effectstype effect;//对话框的飞入形式
     public OkHttpClient client = new OkHttpClient();//网络获取
@@ -104,6 +106,10 @@ public class MainActivity extends Activity{
         initView();
         sharedPreference = PreferenceManager.getDefaultSharedPreferences(this);
 
+        for (int i=0;i<1001;i++)
+        {
+            number[i]=i+1;
+        }
 
         things_send= (EditText)findViewById(R.id.things_send);
         send=(Button)findViewById(R.id.send);
@@ -112,14 +118,10 @@ public class MainActivity extends Activity{
         Bmob.initialize(this, "5dcef2bf784ec223e5c86ae4e71d0172");
 
         listView = (ListView) findViewById(R.id.listView);
-        for (int j = 0; j < title.length; j++) {
-            Map<String, String> map = new HashMap<String, String>();
-            map.put("title", title[j]);
-            map.put("num", num[j]);
-            this.list.add(map);
-        }
-        adapter = new SimpleAdapter(this, list, R.layout.mainlistview_adapter,
-                new String[] { "title" ,"num"}, new int[] { R.id.title ,R.id.num});
+
+      //  adapter = new MyAdapter(this, list, R.layout.mainlistview_adapter,
+      //          new String[] { "title" ,"num"}, new int[] { R.id.title ,R.id.num});
+        adapter= new MyAdapter();
         listView.setAdapter(adapter);
         boolean isRemember = sharedPreference.getBoolean("is_login", false);
         if (isRemember) {
@@ -149,9 +151,12 @@ public class MainActivity extends Activity{
                 // TODO Auto-generated method stub
                 if(BmobRealTimeData.ACTION_UPDATETABLE.equals(arg0.optString("action"))){
                     JSONObject data = arg0.optJSONObject("data");
-                   // messages.add(new CardMark(data.optString("name"), data.optString("content")));
-                   // adapter.notifyDataSetChanged();
-                    Toast.makeText(MainActivity.this,data.toString(),Toast.LENGTH_LONG).show();
+                    CardMark things = new CardMark();
+                    things.setContent(data.optString("content"));
+                    things.setQq_number(data.optString("qq_number"));
+                    messages.add(things);
+                    adapter.notifyDataSetChanged();
+                   // Toast.makeText(MainActivity.this,data.toString(),Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -406,5 +411,65 @@ public class MainActivity extends Activity{
             }
         }
     };
+
+    private class MyAdapter extends BaseAdapter {
+
+        ViewHolder holder;
+
+        int i;
+
+
+        @Override
+        public int getCount() {
+            // TODO Auto-generated method stub
+            return messages.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            // TODO Auto-generated method stub
+            return messages.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            // TODO Auto-generated method stub
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            // TODO Auto-generated method stub
+            if(convertView == null){
+                convertView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.mainlistview_adapter, null);
+                holder = new ViewHolder();
+
+                holder.tv_num = (TextView) convertView.findViewById(R.id.num);
+                holder.tv_content = (TextView) convertView.findViewById(R.id.title);
+                holder.tv_ic = (ImageView) convertView.findViewById(R.id.icon);
+
+                convertView.setTag(holder);
+            }else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+
+            CardMark card = messages.get(position);
+            holder.tv_num.setText(number[position]+"");
+            holder.tv_content.setText(card.getContent());
+           // String tv_qq=card.getQq_number();
+           // Bitmap header1 = new NetworkUtil().get_QQ_Header(tv_qq);
+
+            //holder.tv_ic.setImageBitmap(header1);
+
+            return convertView;
+        }
+
+        class ViewHolder{
+            TextView tv_num;
+            TextView tv_content;
+            ImageView tv_ic;
+        }
+
+    }
 }
 
