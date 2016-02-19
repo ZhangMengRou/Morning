@@ -11,22 +11,20 @@ import cn.bmob.v3.listener.SaveListener;
  */
 public class ThingsToBmob {
 
-    private String path ="/sdcard/Morning/pic/head.png";
-    private String QQ_b;
+
     private mUser v_user;
     private View v_b;
     private String things_b;
 
-    public boolean sendmsg(String things, mUser user, View v)
-    {
-        things_b=things;
-        v_user=user;
-        v_b=v;
+    public boolean sendmsg(String things, mUser user, View v) {
+        things_b = things;
+        v_user = user;
+        v_b = v;
         send_things(v_b);
         return true;
     }
-    public void send_things(View v)
-    {
+
+    public void send_things(View v) {
         final CardMark things = new CardMark();
         things.setContent(things_b);
         things.setUser(v_user);
@@ -34,7 +32,7 @@ public class ThingsToBmob {
             @Override
             public void onSuccess() {
                 // TODO Auto-generated method stub
-                System.out.print("添加数据成功，返回objectId为："+things.getObjectId());
+                System.out.print("添加数据成功，返回objectId为：" + things.getObjectId());
             }
 
             @Override
