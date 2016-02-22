@@ -137,14 +137,20 @@ public class MainActivity extends Activity {
         send.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                things = things_send.getText().toString();
-                String qq = sharedPreference.getString("qq", "0000");
-                if (new GetFromBmob().connect_mes(qq, arg0, things)) {
-                    things_send.setText("");
-                } else {
-                    Toast.makeText(MainActivity.this, "发送失败", Toast.LENGTH_LONG).show();
-                }
 
+                boolean isRemember = sharedPreference.getBoolean("is_login", false);
+                if (isRemember) {
+                    things = things_send.getText().toString();
+                    String qq = sharedPreference.getString("qq", "0000");
+                    if (new GetFromBmob().connect_mes(qq, arg0, things)) {
+                        things_send.setText("");
+                    } else {
+                        Toast.makeText(MainActivity.this, "发送失败", Toast.LENGTH_LONG).show();
+                    }
+                }
+                else {
+                    Toast.makeText(MainActivity.this, "未登录", Toast.LENGTH_LONG).show();
+                }
             }
         });
         init();
@@ -254,7 +260,17 @@ public class MainActivity extends Activity {
 
                         break;
                     case 3:
-                        Toast.makeText(MainActivity.this, "" + position, Toast.LENGTH_LONG).show();
+                        editor = sharedPreference.edit();
+                        editor.putBoolean("is_login", false);
+                        editor.commit();
+                        editor.clear();
+                        login = (TextView) findViewById(R.id.text_login);
+                        login.setText("未登录");
+                        ic = (CircleImageView) findViewById(R.id.iv_bottom);//不放这里会报空指针异常。。汪
+                        ic.setImageDrawable(null);
+                        icm = (CircleImageView) findViewById(R.id.iv_icon);
+                        icm.setImageBitmap(null);
+                        Toast.makeText(MainActivity.this, "注销成功", Toast.LENGTH_LONG).show();
 
                         //finish();
                         break;
