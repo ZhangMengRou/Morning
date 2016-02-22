@@ -11,41 +11,35 @@
         android:layout_marginLeft="20dp"
         android:background="#cccccc" />
 
-    <ImageView
-        android:id="@+id/img_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/top_line"
-        android:layout_marginLeft="8dp"
-        android:src="@drawable/timeline_green" />
     <TextView
         android:id="@+id/num"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:text="1"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:text="12"
+        android:background="@drawable/timeline_green"
         android:textColor="@color/colorWhite"
-        android:paddingTop="8dp"
+        android:gravity="center"
+
+        android:layout_marginLeft="8dp"
         android:textSize="11sp"
         android:layout_below="@+id/top_line"
-        android:layout_alignLeft="@+id/top_line"
-        android:layout_alignStart="@+id/top_line" />
+         />
 
     <ImageView
         android:id="@+id/icon"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:src="@drawable/nothing"
-        android:layout_alignTop="@+id/img_icon"
-        android:layout_toRightOf="@+id/img_icon"
-        android:layout_toEndOf="@+id/img_icon" />
+        android:layout_alignTop="@+id/num"
+        android:layout_toRightOf="@+id/num"
+        android:layout_toEndOf="@+id/num" />
 
 
     <View
         android:id="@+id/bottom_line"
         android:layout_width="2dp"
         android:layout_height="50dp"
-        android:layout_below="@id/img_icon"
+        android:layout_below="@id/num"
         android:layout_marginLeft="20dp"
         android:background="#cccccc" />
 
