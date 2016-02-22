@@ -474,8 +474,7 @@ public class MainActivity extends Activity {
 
             CardMark card = messages.get(position);
             String id = userId.get(position);
-            //Bitmap useric = user_ic.get(position);
-            Bitmap useric = BitmapFactory.decodeFile(user_path);
+            Bitmap useric = user_ic.get(position);
             //  new GetFromBmob().setdata(userId.get(position),convertView,MainActivity.this);
             holder.tv_num.setText(number[position] + "");
             holder.tv_content.setText(card.getContent());

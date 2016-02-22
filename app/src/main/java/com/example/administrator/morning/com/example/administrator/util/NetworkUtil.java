@@ -194,7 +194,7 @@ public class NetworkUtil {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        //返回圆形bitmap
+        //返回bitmap
         return bitmap;
     }
 
