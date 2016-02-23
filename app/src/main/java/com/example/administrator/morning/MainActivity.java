@@ -29,7 +29,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.administrator.morning.Calendar.CalendarActivity;
 import com.example.administrator.morning.aboutuser.BasemsgToBmob;
 import com.example.administrator.morning.allmes.CardMark;
 import com.example.administrator.morning.allmes.GetFromBmob;
@@ -147,8 +146,7 @@ public class MainActivity extends Activity {
                     } else {
                         Toast.makeText(MainActivity.this, "发送失败", Toast.LENGTH_LONG).show();
                     }
-                }
-                else {
+                } else {
                     Toast.makeText(MainActivity.this, "未登录", Toast.LENGTH_LONG).show();
                 }
             }
@@ -241,37 +239,59 @@ public class MainActivity extends Activity {
 
                 switch (position) {
                     case 0:
-                        // Intent intent0 = new Intent(ClockInRecord.this, ClockInRecord.class);
-                        Intent intent0 = new Intent(MainActivity.this, CalendarActivity.class);
-                        MainActivity.this.startActivity(intent0);
-                        // Toast.makeText(MainActivity.this,""+position,Toast.LENGTH_LONG).show();
+                        boolean isRemember0 = sharedPreference.getBoolean("is_login", false);
+                        if (isRemember0) {
+
+                            Intent intent0 = new Intent(MainActivity.this, ClockInRecord.class);
+                            //Intent intent0 = new Intent(MainActivity.this, CalendarActivity.class);
+                            MainActivity.this.startActivity(intent0);
+                            // Toast.makeText(MainActivity.this,""+position,Toast.LENGTH_LONG).show();
+
+                        } else {
+                            Toast.makeText(MainActivity.this, "未登录", Toast.LENGTH_LONG).show();
+                        }
                         break;
                     case 1:
-                        Intent intent1 = new Intent(MainActivity.this, SerialNumber.class);
-                        MainActivity.this.startActivity(intent1);
-                        // Toast.makeText(MainActivity.this,""+position,Toast.LENGTH_LONG).show();
+                        boolean isRemember1 = sharedPreference.getBoolean("is_login", false);
+                        if (isRemember1) {
+                            Intent intent1 = new Intent(MainActivity.this, SerialNumber.class);
+                            MainActivity.this.startActivity(intent1);
+                            // Toast.makeText(MainActivity.this,""+position,Toast.LENGTH_LONG).show();
 
+                        } else {
+                            Toast.makeText(MainActivity.this, "未登录", Toast.LENGTH_LONG).show();
+                        }
                         break;
                     case 2:
-
-                        Intent intent2 = new Intent(MainActivity.this, WinningRecord.class);
-                        MainActivity.this.startActivity(intent2);
-                        // Toast.makeText(MainActivity.this,""+position,Toast.LENGTH_LONG).show();
-
+                        boolean isRemember2 = sharedPreference.getBoolean("is_login", false);
+                        if (isRemember2) {
+                            Intent intent2 = new Intent(MainActivity.this, WinningRecord.class);
+                            MainActivity.this.startActivity(intent2);
+                            // Toast.makeText(MainActivity.this,""+position,Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(MainActivity.this, "未登录", Toast.LENGTH_LONG).show();
+                        }
                         break;
                     case 3:
-                        editor = sharedPreference.edit();
-                        editor.putBoolean("is_login", false);
-                        editor.commit();
-                        editor.clear();
-                        login = (TextView) findViewById(R.id.text_login);
-                        login.setText("未登录");
-                        ic = (CircleImageView) findViewById(R.id.iv_bottom);//不放这里会报空指针异常。。汪
-                        ic.setImageDrawable(null);
-                        icm = (CircleImageView) findViewById(R.id.iv_icon);
-                        icm.setImageBitmap(null);
-                        Toast.makeText(MainActivity.this, "注销成功", Toast.LENGTH_LONG).show();
+                        boolean isRemember3 = sharedPreference.getBoolean("is_login", false);
+                        if (isRemember3) {
+                            editor = sharedPreference.edit();
+                            editor.putBoolean("is_login", false);
+                            editor.commit();
+                            editor.clear();
+                            login = (TextView) findViewById(R.id.text_login);
+                            login.setText("未登录");
+                            ic = (CircleImageView) findViewById(R.id.iv_bottom);//不放这里会报空指针异常。。汪
+                            //ic.setImageDrawable(null);
+                            ic.setImageResource(R.drawable.nothing);
+                            icm = (CircleImageView) findViewById(R.id.iv_icon);
+                            // icm.setImageBitmap(null);
+                            icm.setImageResource(R.drawable.nothing);
+                            Toast.makeText(MainActivity.this, "注销成功", Toast.LENGTH_LONG).show();
 
+                        } else {
+                            Toast.makeText(MainActivity.this, "然而你并没有登录", Toast.LENGTH_LONG).show();
+                        }
                         //finish();
                         break;
                 }

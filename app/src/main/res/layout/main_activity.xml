@@ -165,8 +165,10 @@
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true" />
 
+                <!--transcriptMode="alwaysScroll"自动滚动到底部-->
                 <ListView
                     android:layout_width="wrap_content"
+                    android:transcriptMode="alwaysScroll"
                     android:background="@null"
                     android:layout_height="wrap_content"
                     android:id="@+id/listView"

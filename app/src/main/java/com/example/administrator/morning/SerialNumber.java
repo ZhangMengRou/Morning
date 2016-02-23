@@ -2,6 +2,8 @@ package com.example.administrator.morning;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -15,6 +17,8 @@ import java.util.Map;
  */
 public class SerialNumber extends Activity {
 
+    private ImageView back = null;
+
     private ListView listView = null;
     private SimpleAdapter adapter = null;
     private List<Map<String, String>> list = new ArrayList<Map<String, String>>();
@@ -26,6 +30,15 @@ public class SerialNumber extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.serial_number);
 
+        back = (ImageView) findViewById(R.id.back);
+        back.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                // TODO Auto-generated method stub
+                finish();
+            }
+        });
         listView = (ListView) findViewById(R.id.serial_number_listview);
         for (int j = 0; j < week.length; j++) {
             Map<String, String> map = new HashMap<String, String>();

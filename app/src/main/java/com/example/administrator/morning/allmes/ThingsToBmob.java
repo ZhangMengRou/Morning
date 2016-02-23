@@ -25,6 +25,7 @@ public class ThingsToBmob {
     }
 
     public void send_things(View v) {
+
         final CardMark things = new CardMark();
         things.setContent(things_b);
         things.setUser(v_user);
