@@ -151,6 +151,7 @@ public class MainActivity extends Activity {
                 }
             }
         });
+        new GetFromBmob().getcardmes(getWindow().getDecorView());
         init();
     }
 
@@ -169,14 +170,42 @@ public class MainActivity extends Activity {
                     things_for_v.setContent(data.optString("content"));
                     userId.add(data.optString("user"));
                     //  new GetFromBmob().down_user_ic(data.optString("user"),getWindow().getDecorView(),MainActivity.this);
-                    new NetworkUtil().getHttpBitmap(data.optString("user"), getWindow().getDecorView());
+                    Boolean flag=new NetworkUtil().getHttpBitmap(data.optString("user"), getWindow().getDecorView());
+
                     user_path = "/sdcard/Morning/pic/users/" + data.optString("user") + "/head.png";
-                    Log.d("1", "onDataChange: ff" + user_path);
-                    user_ic.add(BitmapFactory.decodeFile(user_path));
-                    Log.d("2", "onDataChange: ff" + user_ic);
-                    //things_for_v.setUser(new GetFromBmob().get_muser(data.optString("qq_number"),getWindow().getDecorView()));
-                    messages.add(things_for_v);
-                    adapter.notifyDataSetChanged();
+
+                    if (BitmapFactory.decodeFile(user_path)==null)
+                    {
+                        Handler mHandler = new Handler();
+                        mHandler.postDelayed(new Runnable(){
+
+                            @Override
+                            public void run() {
+
+                                Log.d("1", "onDataChange: ff" + user_path);
+                                user_ic.add(BitmapFactory.decodeFile(user_path));
+                                Log.d("2", "onDataChange: ff" + user_ic);
+                                //things_for_v.setUser(new GetFromBmob().get_muser(data.optString("qq_number"),getWindow().getDecorView()));
+                                messages.add(things_for_v);
+                                adapter.notifyDataSetChanged();
+
+                            }
+                        }, 2000);//延迟2s..就第一次加载图片的时候TUT别打我。。汪汪。。下手轻点
+
+
+                        Log.d("notexist", "onDataChange: ff" + user_ic);
+                    }
+                    else
+                    {
+                        Log.d("1", "onDataChange: ff" + user_path);
+                        user_ic.add(BitmapFactory.decodeFile(user_path));
+                        Log.d("2", "onDataChange: ff" + user_ic);
+                        //things_for_v.setUser(new GetFromBmob().get_muser(data.optString("qq_number"),getWindow().getDecorView()));
+                        messages.add(things_for_v);
+                        adapter.notifyDataSetChanged();
+                        Log.d("exist", "onDataChange: ff" + user_ic);
+                    }
+
                     //Toast.makeText(MainActivity.this,data.toString(),Toast.LENGTH_LONG).show();
                 }
 
@@ -467,6 +496,7 @@ public class MainActivity extends Activity {
         }
     };
 
+
     private class MyAdapter extends BaseAdapter {
 
         ViewHolder holder;
@@ -507,6 +537,7 @@ public class MainActivity extends Activity {
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
+
 
             CardMark card = messages.get(position);
             String id = userId.get(position);

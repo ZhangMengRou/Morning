@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@drawable/side_nav_bar">
 
     <RelativeLayout
         android:id="@+id/rl_title"
@@ -33,9 +34,13 @@
 
     <ListView
         android:id="@+id/serial_number_listview"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp">
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="10dp"
+        android:scrollbars="none"
+        android:divider="#00000000"
+        android:dividerHeight="10dp">
 
     </ListView>
 </LinearLayout>

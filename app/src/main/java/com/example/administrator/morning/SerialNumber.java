@@ -8,6 +8,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,7 @@ public class SerialNumber extends Activity {
             map.put("num", num[j]);
             this.list.add(map);
         }
+        Collections.reverse(list);
         adapter = new SimpleAdapter(this, list, R.layout.serial_number_listview_adapter,
                 new String[] { "week" ,"num"}, new int[] { R.id.week,R.id.serial_number_num});
         listView.setAdapter(adapter);

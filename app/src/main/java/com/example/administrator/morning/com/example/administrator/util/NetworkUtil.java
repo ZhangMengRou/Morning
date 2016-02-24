@@ -41,6 +41,7 @@ public class NetworkUtil {
     private String url = null;
     private String user_qq = "2308666855";
     private String user_id = null;
+    private static int flag = 0;
 
     public String get_QQ_Name(String QQ) {
 
@@ -111,7 +112,7 @@ public class NetworkUtil {
     /**
      * 根据URL获取Bitmap
      */
-    public void getHttpBitmap(String id, final View v) {
+    public Boolean getHttpBitmap(String id, final View v) {
 
         Log.d(ClassForName, "idid " + id);
 
@@ -170,7 +171,14 @@ public class NetworkUtil {
 
             }
         });
+        /*while (flag!=1)
+        {
 
+            Log.d("waitttttt","11");
+
+        }
+        flag=0;*/
+        return true;
     }
 
 
@@ -210,6 +218,7 @@ public class NetworkUtil {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
             bos.flush();
             bos.close();
+            //flag=1;
 
         } catch (IOException e) {
             e.printStackTrace();

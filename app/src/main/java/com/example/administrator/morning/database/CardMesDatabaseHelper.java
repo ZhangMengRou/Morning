@@ -10,12 +10,10 @@ public class CardMesDatabaseHelper extends SQLiteOpenHelper {
     private boolean NULL = true;                //标记表是否初始化
     public static final String CREATE_CARDMARKMES = "create table CardMarkMes ("
             + "id integer primary key,"
-            + "major text,"
-            + "academy text,"
-            + "httpurl text,"
-            + "description1 text,"
-            + "description2 text,"
-            + "y_n integer)";
+            + "objectid text,"
+            + "content text,"
+            + "user text,"
+            + "createdAt text)";
 
     public CardMesDatabaseHelper(Context context, String databasename, CursorFactory factory, int version) {
         super(context, databasename, factory, version);
