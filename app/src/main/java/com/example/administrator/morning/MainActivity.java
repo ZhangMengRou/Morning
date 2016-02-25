@@ -161,11 +161,15 @@ public class MainActivity extends Activity {
         Cursor cursor = db.query("CardMarkMes",null,null,null,null,null,null);
         if (cursor.moveToLast())
         {
+            int pos = cursor.getPosition();
             int i= Integer.parseInt(cursor.getString(cursor.getColumnIndex("num")));
+            Log.d("qqqq","i "+i+"pos"+pos);
+            cursor.moveToPosition(pos-i);
+            i=0;
             do {
                 String num = cursor.getString(cursor.getColumnIndex("num"));
-                if (Integer.parseInt(num)>i) break;
-                i--;
+                if (Integer.parseInt(num)<i) break;
+                i++;
                 String content = cursor.getString(cursor.getColumnIndex("content"));
                 String user = cursor.getString(cursor.getColumnIndex("user"));
                 things_for_v = new CardMark();
@@ -207,7 +211,7 @@ public class MainActivity extends Activity {
                 }
 
                 Log.d("nummmmm:",num);
-            } while (cursor.moveToPrevious());
+            } while (cursor.moveToNext());
         }
 
         cursor.close();
