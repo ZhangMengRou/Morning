@@ -10,6 +10,7 @@ public class CardMesDatabaseHelper extends SQLiteOpenHelper {
     private boolean NULL = true;                //标记表是否初始化
     public static final String CREATE_CARDMARKMES = "create table CardMarkMes ("
             + "id integer primary key,"
+            + "num text,"
             + "objectid text,"
             + "content text,"
             + "user text,"
@@ -22,10 +23,9 @@ public class CardMesDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        if (NULL) {
-            db.execSQL(CREATE_CARDMARKMES);
-            NULL = false;
-        }
+
+        db.execSQL(CREATE_CARDMARKMES);
+
     }
 
     @Override

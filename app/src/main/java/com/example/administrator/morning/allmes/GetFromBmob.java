@@ -1,11 +1,14 @@
 package com.example.administrator.morning.allmes;
 
+import android.content.ContentValues;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.View;
 
 import com.example.administrator.morning.aboutuser.mUser;
+import com.example.administrator.morning.database.CardMesDatabaseHelper;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,6 +35,7 @@ public class GetFromBmob {
     public List<CardMark> today_object;
     private SharedPreferences sharedPreference;
     private SharedPreferences.Editor editor;
+
 
     public boolean connect_mes(String QQ, final View v, String things) {
         things_b = things;
@@ -62,12 +66,17 @@ public class GetFromBmob {
         return judge;
     }
 
-    public boolean getcardmes( final View v) {
+    public boolean getcardmes(final View v) {
+
         BmobQuery<CardMark> query = new BmobQuery<CardMark>();
         List<BmobQuery<CardMark>> and = new ArrayList<BmobQuery<CardMark>>();
+        SimpleDateFormat    sDateFormat    =   new    SimpleDateFormat("yyyy-MM-dd");
+        String    day    =    sDateFormat.format(new    java.util.Date());
+        Log.d("qqqqqq", "day   " + day);
+
         //大于00：00：00
         BmobQuery<CardMark> q1 = new BmobQuery<CardMark>();
-        String start = "2016-02-24 00:00:00";
+        String start = day+" 00:00:00";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = null;
         try {
@@ -79,7 +88,7 @@ public class GetFromBmob {
         and.add(q1);
         //小于23：59：59
         BmobQuery<CardMark> q2 = new BmobQuery<CardMark>();
-        String end = "2016-02-24 23:59:59";
+        String end = day+" 23:59:59";
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date1 = null;
         try {
@@ -98,28 +107,43 @@ public class GetFromBmob {
                 // TODO Auto-generated method stub
 
 
-                editor = sharedPreference.edit();
-                editor.putInt("today_msg_size", object.size());
-                editor.commit();
-                editor.clear();
-                today_object=object;
-                setdate(v);
-                Log.d("qqqqqq", "onSuccess: "+object.get(0).getCreatedAt());
+                int size = object.size();
+
+                CardMesDatabaseHelper dbHelper = new CardMesDatabaseHelper(v.getContext(), "CardMes.db", null, 1);
+                SQLiteDatabase db = dbHelper.getWritableDatabase();
+                ContentValues values = new ContentValues();
+                int i = 0;
+                for (i = 0; i < size; i++) {
+
+                    values.put("num", "" + i);
+                    values.put("objectid", object.get(i).getObjectId());
+                    values.put("content",object.get(i).getContent());
+                    values.put("user", object.get(i).getUser().getObjectId());
+                    db.insert("CardMarkMes", null, values);
+                    values.clear();
+                    //db.close();
+                    Log.d("qqqqqq", "content   " + object.get(i).getContent());
+                }
+                //today_object = object;
+                //setdate(v,size);
+                Log.d("qqqqqq", "onSuccess: " + object.size()+"userid: "+object.get(0).getUser().getObjectId());
 
             }
+
             @Override
             public void onError(int code, String msg) {
                 // TODO Auto-generated method stub
-                Log.d("qqqqqq", "onno: "+msg);
+                Log.d("qqqqqq", "onno: " + msg);
             }
         });
-        return  true;
+        return true;
     }
 
 
-    public List<CardMark> setdate( final View v) {
+    public List<CardMark> setdate(final View v, int size) {
+
+
 
         return today_object;
-
     }
 }

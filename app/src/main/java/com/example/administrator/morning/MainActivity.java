@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
@@ -33,6 +35,7 @@ import com.example.administrator.morning.aboutuser.BasemsgToBmob;
 import com.example.administrator.morning.allmes.CardMark;
 import com.example.administrator.morning.allmes.GetFromBmob;
 import com.example.administrator.morning.com.example.administrator.util.NetworkUtil;
+import com.example.administrator.morning.database.CardMesDatabaseHelper;
 import com.example.administrator.morning.mainview.DragLayout;
 import com.example.administrator.morning.mainview.DragLayout.DragListener;
 import com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype;
@@ -152,6 +155,64 @@ public class MainActivity extends Activity {
             }
         });
         new GetFromBmob().getcardmes(getWindow().getDecorView());
+
+        CardMesDatabaseHelper dbHelper = new CardMesDatabaseHelper(this, "CardMes.db", null, 1);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.query("CardMarkMes",null,null,null,null,null,null);
+        if (cursor.moveToLast())
+        {
+            int i= Integer.parseInt(cursor.getString(cursor.getColumnIndex("num")));
+            do {
+                String num = cursor.getString(cursor.getColumnIndex("num"));
+                if (Integer.parseInt(num)>i) break;
+                i--;
+                String content = cursor.getString(cursor.getColumnIndex("content"));
+                String user = cursor.getString(cursor.getColumnIndex("user"));
+                things_for_v = new CardMark();
+                things_for_v.setContent(content);
+                userId.add(user);
+                user_path = "/sdcard/Morning/pic/users/" + user + "/head.png";
+
+                Boolean flag=new NetworkUtil().getHttpBitmap(user, getWindow().getDecorView());
+                if (BitmapFactory.decodeFile(user_path)==null)
+                {
+                    Handler mHandler = new Handler();
+                    mHandler.postDelayed(new Runnable(){
+
+                        @Override
+                        public void run() {
+
+                            Log.d("1", "onDataChange: ff" + user_path);
+                            user_ic.add(BitmapFactory.decodeFile(user_path));
+                            Log.d("2", "onDataChange: ff" + user_ic);
+                            //things_for_v.setUser(new GetFromBmob().get_muser(data.optString("qq_number"),getWindow().getDecorView()));
+                            messages.add(things_for_v);
+                            adapter.notifyDataSetChanged();
+
+                        }
+                    }, 2000);//延迟2s..就第一次加载图片的时候TUT别打我。。汪汪。。下手轻点
+
+
+                    Log.d("notexist", "onDataChange: ff" + user_ic);
+                }
+                else
+                {
+                    Log.d("1yes", "onDataChange: ff" + user_path);
+                    user_ic.add(BitmapFactory.decodeFile(user_path));
+                    Log.d("2yes", "onDataChange: ff" + user_ic);
+                    //things_for_v.setUser(new GetFromBmob().get_muser(data.optString("qq_number"),getWindow().getDecorView()));
+                    messages.add(things_for_v);
+                    adapter.notifyDataSetChanged();
+                    Log.d("exist", "onDataChange: ff" + user_ic);
+                }
+
+                Log.d("nummmmm:",num);
+            } while (cursor.moveToPrevious());
+        }
+
+        cursor.close();
+        db.close();
+
         init();
     }
 
