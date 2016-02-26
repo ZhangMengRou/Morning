@@ -144,10 +144,14 @@ public class MainActivity extends Activity {
                 if (isRemember) {
                     things = things_send.getText().toString();
                     String qq = sharedPreference.getString("qq", "0000");
-                    if (new GetFromBmob().connect_mes(qq, arg0, things)) {
-                        things_send.setText("");
+                    if (things.equals("")) {
+                        Toast.makeText(MainActivity.this, "请输入打卡内容", Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(MainActivity.this, "发送失败", Toast.LENGTH_LONG).show();
+                        if (new GetFromBmob().connect_mes(qq, arg0, things)) {
+                            things_send.setText("");
+                        } else {
+                            Toast.makeText(MainActivity.this, "发送失败", Toast.LENGTH_LONG).show();
+                        }
                     }
                 } else {
                     Toast.makeText(MainActivity.this, "未登录", Toast.LENGTH_LONG).show();
@@ -156,66 +160,38 @@ public class MainActivity extends Activity {
         });
         new GetFromBmob().getcardmes(getWindow().getDecorView());
 
-        CardMesDatabaseHelper dbHelper = new CardMesDatabaseHelper(this, "CardMes.db", null, 1);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        Cursor cursor = db.query("CardMarkMes",null,null,null,null,null,null);
-        if (cursor.moveToLast())
-        {
-            int pos = cursor.getPosition();
-            int i= Integer.parseInt(cursor.getString(cursor.getColumnIndex("num")));
-            Log.d("qqqq","i "+i+"pos"+pos);
-            cursor.moveToPosition(pos-i);
-            i=0;
-            do {
-                String num = cursor.getString(cursor.getColumnIndex("num"));
-                if (Integer.parseInt(num)<i) break;
-                i++;
-                String content = cursor.getString(cursor.getColumnIndex("content"));
-                String user = cursor.getString(cursor.getColumnIndex("user"));
-                things_for_v = new CardMark();
-                things_for_v.setContent(content);
-                userId.add(user);
-                user_path = "/sdcard/Morning/pic/users/" + user + "/head.png";
+        Handler mHandler = new Handler();
+        mHandler.postDelayed(new Runnable() {
 
-                Boolean flag=new NetworkUtil().getHttpBitmap(user, getWindow().getDecorView());
-                if (BitmapFactory.decodeFile(user_path)==null)
-                {
-                    Handler mHandler = new Handler();
-                    mHandler.postDelayed(new Runnable(){
+            @Override
+            public void run() {
 
-                        @Override
-                        public void run() {
-
-                            Log.d("1", "onDataChange: ff" + user_path);
-                            user_ic.add(BitmapFactory.decodeFile(user_path));
-                            Log.d("2", "onDataChange: ff" + user_ic);
-                            //things_for_v.setUser(new GetFromBmob().get_muser(data.optString("qq_number"),getWindow().getDecorView()));
-                            messages.add(things_for_v);
-                            adapter.notifyDataSetChanged();
-
-                        }
-                    }, 2000);//延迟2s..就第一次加载图片的时候TUT别打我。。汪汪。。下手轻点
-
-
-                    Log.d("notexist", "onDataChange: ff" + user_ic);
-                }
-                else
-                {
-                    Log.d("1yes", "onDataChange: ff" + user_path);
-                    user_ic.add(BitmapFactory.decodeFile(user_path));
-                    Log.d("2yes", "onDataChange: ff" + user_ic);
-                    //things_for_v.setUser(new GetFromBmob().get_muser(data.optString("qq_number"),getWindow().getDecorView()));
-                    messages.add(things_for_v);
-                    adapter.notifyDataSetChanged();
-                    Log.d("exist", "onDataChange: ff" + user_ic);
+                CardMesDatabaseHelper dbHelper = new CardMesDatabaseHelper(MainActivity.this, "CardMes.db", null, 1);
+                SQLiteDatabase db = dbHelper.getWritableDatabase();
+                Cursor cursor = db.query("CardMarkMes", null, null, null, null, null, null);
+                if (cursor.moveToLast()) {
+                    int pos = cursor.getPosition();
+                    int i = Integer.parseInt(cursor.getString(cursor.getColumnIndex("num")));
+                    Log.d("qqqq", "i " + i + "pos" + pos);
+                    cursor.moveToPosition(pos - i);
+                    i = 0;
+                    do {
+                        String num = cursor.getString(cursor.getColumnIndex("num"));
+                        if (Integer.parseInt(num) < i) break;
+                        i++;
+                        String content = cursor.getString(cursor.getColumnIndex("content"));
+                        String user = cursor.getString(cursor.getColumnIndex("user"));
+                        renew_list(user, content);
+                        Log.d("nummmmm:", num);
+                    } while (cursor.moveToNext());
                 }
 
-                Log.d("nummmmm:",num);
-            } while (cursor.moveToNext());
-        }
+                cursor.close();
+                db.close();
 
-        cursor.close();
-        db.close();
+            }
+        }, 2500);//延迟2.5s..就第一次加载图片的时候TUT别打我。。汪汪。。下手轻点
+
 
         init();
     }
@@ -231,46 +207,7 @@ public class MainActivity extends Activity {
                     JSONObject data = arg0.optJSONObject("data");
                     // CardMark things = new CardMark();
 
-                    things_for_v = new CardMark();
-                    things_for_v.setContent(data.optString("content"));
-                    userId.add(data.optString("user"));
-                    //  new GetFromBmob().down_user_ic(data.optString("user"),getWindow().getDecorView(),MainActivity.this);
-                    Boolean flag=new NetworkUtil().getHttpBitmap(data.optString("user"), getWindow().getDecorView());
-
-                    user_path = "/sdcard/Morning/pic/users/" + data.optString("user") + "/head.png";
-
-                    if (BitmapFactory.decodeFile(user_path)==null)
-                    {
-                        Handler mHandler = new Handler();
-                        mHandler.postDelayed(new Runnable(){
-
-                            @Override
-                            public void run() {
-
-                                Log.d("1", "onDataChange: ff" + user_path);
-                                user_ic.add(BitmapFactory.decodeFile(user_path));
-                                Log.d("2", "onDataChange: ff" + user_ic);
-                                //things_for_v.setUser(new GetFromBmob().get_muser(data.optString("qq_number"),getWindow().getDecorView()));
-                                messages.add(things_for_v);
-                                adapter.notifyDataSetChanged();
-
-                            }
-                        }, 2000);//延迟2s..就第一次加载图片的时候TUT别打我。。汪汪。。下手轻点
-
-
-                        Log.d("notexist", "onDataChange: ff" + user_ic);
-                    }
-                    else
-                    {
-                        Log.d("1", "onDataChange: ff" + user_path);
-                        user_ic.add(BitmapFactory.decodeFile(user_path));
-                        Log.d("2", "onDataChange: ff" + user_ic);
-                        //things_for_v.setUser(new GetFromBmob().get_muser(data.optString("qq_number"),getWindow().getDecorView()));
-                        messages.add(things_for_v);
-                        adapter.notifyDataSetChanged();
-                        Log.d("exist", "onDataChange: ff" + user_ic);
-                    }
-
+                    renew_list(data.optString("user"), data.optString("content"));
                     //Toast.makeText(MainActivity.this,data.toString(),Toast.LENGTH_LONG).show();
                 }
 
@@ -562,6 +499,44 @@ public class MainActivity extends Activity {
     };
 
 
+    public void renew_list(String user, String content) {
+
+        things_for_v = new CardMark();
+        things_for_v.setContent(content);
+        userId.add(user);
+        user_path = "/sdcard/Morning/pic/users/" + user + "/head.png";
+
+        Boolean flag = new NetworkUtil().getHttpBitmap(user, getWindow().getDecorView());
+        if (BitmapFactory.decodeFile(user_path) == null) {
+            Handler mHandler = new Handler();
+            mHandler.postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+
+                    Log.d("1", "onDataChange: ff" + user_path);
+                    user_ic.add(BitmapFactory.decodeFile(user_path));
+                    Log.d("2", "onDataChange: ff" + user_ic);
+                    //things_for_v.setUser(new GetFromBmob().get_muser(data.optString("qq_number"),getWindow().getDecorView()));
+                    messages.add(things_for_v);
+                    adapter.notifyDataSetChanged();
+
+                }
+            }, 2000);//延迟2s..就第一次加载图片的时候TUT别打我。。汪汪。。下手轻点
+
+
+            Log.d("notexist", "onDataChange: ff" + user_ic);
+        } else {
+            Log.d("1yes", "onDataChange: ff" + user_path);
+            user_ic.add(BitmapFactory.decodeFile(user_path));
+            Log.d("2yes", "onDataChange: ff" + user_ic);
+            //things_for_v.setUser(new GetFromBmob().get_muser(data.optString("qq_number"),getWindow().getDecorView()));
+            messages.add(things_for_v);
+            adapter.notifyDataSetChanged();
+            Log.d("exist", "onDataChange: ff" + user_ic);
+        }
+    }
+
     private class MyAdapter extends BaseAdapter {
 
         ViewHolder holder;
@@ -586,6 +561,7 @@ public class MainActivity extends Activity {
             // TODO Auto-generated method stub
             return position;
         }
+
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {

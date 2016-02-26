@@ -2,6 +2,7 @@ package com.example.administrator.morning.allmes;
 
 import android.content.ContentValues;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -70,13 +71,13 @@ public class GetFromBmob {
 
         BmobQuery<CardMark> query = new BmobQuery<CardMark>();
         List<BmobQuery<CardMark>> and = new ArrayList<BmobQuery<CardMark>>();
-        SimpleDateFormat    sDateFormat    =   new    SimpleDateFormat("yyyy-MM-dd");
-        String    day    =    sDateFormat.format(new    java.util.Date());
+        SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String day = sDateFormat.format(new java.util.Date());
         Log.d("qqqqqq", "day   " + day);
 
         //大于00：00：00
         BmobQuery<CardMark> q1 = new BmobQuery<CardMark>();
-        String start = day+" 00:00:00";
+        String start = day + " 00:00:00";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = null;
         try {
@@ -88,7 +89,7 @@ public class GetFromBmob {
         and.add(q1);
         //小于23：59：59
         BmobQuery<CardMark> q2 = new BmobQuery<CardMark>();
-        String end = day+" 23:59:59";
+        String end = day + " 23:59:59";
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date1 = null;
         try {
@@ -113,11 +114,11 @@ public class GetFromBmob {
                 SQLiteDatabase db = dbHelper.getWritableDatabase();
                 ContentValues values = new ContentValues();
                 int i = 0;
-                for (i = 0; i < size; i++) {
+                for (i = checksize(v, size); i < size; i++) {
 
                     values.put("num", "" + i);
                     values.put("objectid", object.get(i).getObjectId());
-                    values.put("content",object.get(i).getContent());
+                    values.put("content", object.get(i).getContent());
                     values.put("user", object.get(i).getUser().getObjectId());
                     db.insert("CardMarkMes", null, values);
                     values.clear();
@@ -126,7 +127,7 @@ public class GetFromBmob {
                 }
                 //today_object = object;
                 //setdate(v,size);
-                Log.d("qqqqqq", "onSuccess: " + object.size()+"userid: "+object.get(0).getUser().getObjectId());
+                Log.d("qqqqqq", "onSuccess: " + object.size() + "userid: " + object.get(0).getUser().getObjectId());
 
             }
 
@@ -140,10 +141,21 @@ public class GetFromBmob {
     }
 
 
-    public List<CardMark> setdate(final View v, int size) {
+    public int checksize(final View v, int size) {
 
+        //对照数据容量，避免使用你不必要的储存空间~机智的我2333
+        int check = 0;
 
-
-        return today_object;
+        CardMesDatabaseHelper dbHelper = new CardMesDatabaseHelper(v.getContext(), "CardMes.db", null, 1);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.query("CardMarkMes", null, null, null, null, null, null);
+        if (cursor.moveToLast()) {
+            int pos = cursor.getPosition();
+            int i = Integer.parseInt(cursor.getString(cursor.getColumnIndex("num")));
+            return i + 1;
+        } else {
+            Log.d("qqqq", "checksize: fail");
+        }
+        return check;
     }
 }
