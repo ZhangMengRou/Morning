@@ -31,6 +31,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.administrator.morning.Bmob.AboutTopic;
 import com.example.administrator.morning.aboutuser.BasemsgToBmob;
 import com.example.administrator.morning.allmes.CardMark;
 import com.example.administrator.morning.allmes.GetFromBmob;
@@ -123,6 +124,7 @@ public class MainActivity extends Activity {
         things_send = (EditText) findViewById(R.id.things_send);
         send = (Button) findViewById(R.id.send);
 
+        TextView idea = (TextView) findViewById(R.id.text_login);
 
         Bmob.initialize(this, "5dcef2bf784ec223e5c86ae4e71d0172");
 
@@ -192,7 +194,8 @@ public class MainActivity extends Activity {
             }
         }, 2500);//延迟2.5s..就第一次加载图片的时候TUT别打我。。汪汪。。下手轻点
 
-
+        //获取今日打卡话题
+        String topic = new AboutTopic().getTopic(getWindow().getDecorView());
         init();
     }
 
@@ -493,10 +496,15 @@ public class MainActivity extends Activity {
                     icm.setImageBitmap(bitmap);
                     break;
                 case 2:
+                    TextView idea = (TextView) findViewById(R.id.main_idea);
+                    Bundle data = msg.getData();
+                    String topic = data.getString("topic");
+                    idea.setText(topic);
                     break;
             }
         }
     };
+
 
 
     public void renew_list(String user, String content) {
@@ -514,12 +522,17 @@ public class MainActivity extends Activity {
                 @Override
                 public void run() {
 
-                    Log.d("1", "onDataChange: ff" + user_path);
-                    user_ic.add(BitmapFactory.decodeFile(user_path));
-                    Log.d("2", "onDataChange: ff" + user_ic);
-                    //things_for_v.setUser(new GetFromBmob().get_muser(data.optString("qq_number"),getWindow().getDecorView()));
-                    messages.add(things_for_v);
-                    adapter.notifyDataSetChanged();
+                    if (BitmapFactory.decodeFile(user_path) == null || things_for_v.getContent().equals("")) {
+
+                        Log.d("GETVIEW", "getView: null");
+                    } else {
+                        Log.d("1", "onDataChange: ff" + user_path);
+                        user_ic.add(BitmapFactory.decodeFile(user_path));
+                        Log.d("2", "onDataChange: ff" + user_ic);
+                        //things_for_v.setUser(new GetFromBmob().get_muser(data.optString("qq_number"),getWindow().getDecorView()));
+                        messages.add(things_for_v);
+                        adapter.notifyDataSetChanged();
+                    }
 
                 }
             }, 2000);//延迟2s..就第一次加载图片的时候TUT别打我。。汪汪。。下手轻点
@@ -527,13 +540,19 @@ public class MainActivity extends Activity {
 
             Log.d("notexist", "onDataChange: ff" + user_ic);
         } else {
-            Log.d("1yes", "onDataChange: ff" + user_path);
-            user_ic.add(BitmapFactory.decodeFile(user_path));
-            Log.d("2yes", "onDataChange: ff" + user_ic);
-            //things_for_v.setUser(new GetFromBmob().get_muser(data.optString("qq_number"),getWindow().getDecorView()));
-            messages.add(things_for_v);
-            adapter.notifyDataSetChanged();
+            if (BitmapFactory.decodeFile(user_path) == null || things_for_v.getContent().equals("")) {
+
+                Log.d("GETVIEW", "getView: null");
+            } else {
+                Log.d("1yes", "onDataChange: ff" + user_path);
+                user_ic.add(BitmapFactory.decodeFile(user_path));
+                Log.d("2yes", "onDataChange: ff" + user_ic);
+                //things_for_v.setUser(new GetFromBmob().get_muser(data.optString("qq_number"),getWindow().getDecorView()));
+                messages.add(things_for_v);
+                adapter.notifyDataSetChanged();
+            }
             Log.d("exist", "onDataChange: ff" + user_ic);
+
         }
     }
 
@@ -583,11 +602,9 @@ public class MainActivity extends Activity {
             CardMark card = messages.get(position);
             String id = userId.get(position);
             Bitmap useric = user_ic.get(position);
-            //  new GetFromBmob().setdata(userId.get(position),convertView,MainActivity.this);
+
             holder.tv_num.setText(number[position] + "");
             holder.tv_content.setText(card.getContent());
-            // String tv_qq=card.getQq_number();
-            // Bitmap ic = DataBase_Operate.getuser_ic(MainActivity.this,id);
             // new  NetworkUtil().get_user_ic(MainActivity.this,id,holder.tv_ic);
             holder.tv_ic.setImageBitmap(useric);
 

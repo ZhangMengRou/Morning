@@ -135,7 +135,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/title"
                     android:layout_centerHorizontal="true"
-                    android:id="@+id/textView2" />
+                    android:id="@+id/main_idea" />
 
 
 
@@ -173,7 +173,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/listView"
                     android:layout_centerHorizontal="true"
-                    android:layout_below="@+id/textView2"
+                    android:layout_below="@+id/main_idea"
                     android:layout_above="@+id/things_send"
                     android:scrollbars="none"
                     android:divider="#00000000"
