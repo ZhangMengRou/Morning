@@ -1,5 +1,9 @@
 package com.example.administrator.morning.Bmob;
 
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 
@@ -19,6 +23,13 @@ import cn.bmob.v3.listener.FindListener;
 public class AboutTopic {
 
     public String idea = null;
+    private SharedPreferences sharedPreference;
+    private SharedPreferences.Editor editor;
+    private Handler handler_ = null;
+
+    public AboutTopic(Handler handler) {
+        this.handler_ = handler;
+    }
 
     public String getTopic(final View v) {
         BmobQuery<MainIdeaForToday> query = new BmobQuery<MainIdeaForToday>();
@@ -63,7 +74,7 @@ public class AboutTopic {
                 String topic = object.get(0).getTopic();
                 idea = topic;
 
-                //MainActivity.ui_handler.sendMessage(msg);
+                showtopic(topic);
                 Log.d("qqqqqq", "yes: " + topic);
 
             }
@@ -79,4 +90,14 @@ public class AboutTopic {
         return idea;
     }
 
+    public void showtopic (String topic)
+    {
+        Bundle bundle= new Bundle();
+        bundle.putString("topic",topic);
+
+        Message msg  = new Message();
+        msg.what = 2 ;
+        msg.setData(bundle);
+        handler_.sendMessage(msg);
+    }
 }

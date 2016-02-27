@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 
@@ -38,6 +40,11 @@ public class GetFromBmob {
     private SharedPreferences.Editor editor;
 
 
+    private Handler handler_ = null;
+
+    public GetFromBmob(Handler handler) {
+        this.handler_ = handler;
+    }
     public boolean connect_mes(String QQ, final View v, String things) {
         things_b = things;
         QQ_b = QQ;
@@ -120,6 +127,7 @@ public class GetFromBmob {
                     values.put("objectid", object.get(i).getObjectId());
                     values.put("content", object.get(i).getContent());
                     values.put("user", object.get(i).getUser().getObjectId());
+                    values.put("createdAt", object.get(i).getUser().getCreatedAt());
                     db.insert("CardMarkMes", null, values);
                     values.clear();
                     //db.close();
@@ -127,6 +135,7 @@ public class GetFromBmob {
                 }
                 //today_object = object;
                 //setdate(v,size);
+                sendmsg();
                 Log.d("qqqqqq", "onSuccess: " + object.size() + "userid: " + object.get(0).getUser().getObjectId());
 
             }
@@ -134,7 +143,7 @@ public class GetFromBmob {
             @Override
             public void onError(int code, String msg) {
                 // TODO Auto-generated method stub
-                Log.d("qqqqqq", "onno: " + msg);
+                Log.d("cardmes no ", "onno: " + msg);
             }
         });
         return true;
@@ -150,12 +159,32 @@ public class GetFromBmob {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Cursor cursor = db.query("CardMarkMes", null, null, null, null, null, null);
         if (cursor.moveToLast()) {
-            int pos = cursor.getPosition();
+            SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            //String dbday=(cursor.getString(cursor.getColumnIndex("createdAt")).substring(0,9);
+            //Log.d("qqqqq", "checksize: "+dbday);
+            //if (dbday.equals(sDateFormat.format(new java.util.Date())))
+           // {
+                int pos = cursor.getPosition();
             int i = Integer.parseInt(cursor.getString(cursor.getColumnIndex("num")));
             return i + 1;
+        //}
+           // else {
+              //  return 0;
+          //  }
         } else {
             Log.d("qqqq", "checksize: fail");
         }
         return check;
+    }
+
+    public void sendmsg ()
+    {
+       // Bundle bundle= new Bundle();
+       // bundle.putString("topic",topic);
+
+        Message msg  = new Message();
+        msg.what = 3 ;
+       // msg.setData(bundle);
+        handler_.sendMessage(msg);
     }
 }

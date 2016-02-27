@@ -3,7 +3,10 @@ package com.example.administrator.morning.com.example.administrator.util;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -42,6 +45,13 @@ public class NetworkUtil {
     private String user_qq = "2308666855";
     private String user_id = null;
     private static int flag = 0;
+    String content_ = null;
+
+    private Handler handler_ = null;
+
+    public NetworkUtil(Handler handler) {
+        this.handler_ = handler;
+    }
 
     public String get_QQ_Name(String QQ) {
 
@@ -112,9 +122,11 @@ public class NetworkUtil {
     /**
      * 根据URL获取Bitmap
      */
-    public Boolean getHttpBitmap(String id, final View v) {
+    public Boolean getHttpBitmap(String id, final View v, String content, final int num) {
 
         Log.d(ClassForName, "idid " + id);
+
+        content_ = content;
 
         user_id = id;
         BmobQuery<mUser> query = new BmobQuery<mUser>();
@@ -149,7 +161,7 @@ public class NetworkUtil {
                             bitmap1 = BitmapFactory.decodeStream(is);
                             is.close();
                             Log.d(ClassForName, "aaa " + bitmap1);
-                            saveBitmapFile(bitmap1, user_id);
+                            saveBitmapFile(bitmap1, user_id, num);
                         } catch (MalformedURLException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
@@ -206,7 +218,7 @@ public class NetworkUtil {
         return bitmap;
     }
 
-    public void saveBitmapFile(Bitmap bitmap, String id) {
+    public void saveBitmapFile(Bitmap bitmap, String id, int num) {
         File file = new File("/sdcard/" + "/Morning/pic/users/" + id);//将要保存图片的路径
         try {
             file.mkdirs();
@@ -220,9 +232,43 @@ public class NetworkUtil {
             bos.close();
             //flag=1;
 
+
+            sendmsg(num);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void sendmsg(int num) {
+        Bundle bundle = new Bundle();
+        bundle.putString("user", user_id);
+        bundle.putString("content", content_);
+
+        Log.d("hanlernum", "onDataChange: UUU" + num);
+        Log.d("1yes", "onDataChange: UUU" + user_id);
+        final Message msg = new Message();
+        msg.what = 4;
+        msg.setData(bundle);
+        double x = 0;
+        if (num > 2) {
+            x = 400 * Math.log(5 * num);
+        } else {
+            x = 300 * num;
+        }
+        Handler mHandler = new Handler();
+        mHandler.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+
+                handler_.sendMessage(msg);
+            }
+        }, (int) x);
+        //别打我。。汪汪汪。。下手轻点。。如果用户有100个。。就延迟了。。50秒。。望天。。
+        //然而并没有那么多人用。。看我蠢真的眼神。。有什么别的推荐么TUT求拯救
+        //然后我用对数小小的优化了一下。。汪汪汪
+
     }
 
 

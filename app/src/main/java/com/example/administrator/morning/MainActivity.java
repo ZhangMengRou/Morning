@@ -66,6 +66,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class MainActivity extends Activity {
     private DragLayout dl;
+
+
     private ListView lv;
     private TextView us;
 
@@ -149,7 +151,7 @@ public class MainActivity extends Activity {
                     if (things.equals("")) {
                         Toast.makeText(MainActivity.this, "请输入打卡内容", Toast.LENGTH_LONG).show();
                     } else {
-                        if (new GetFromBmob().connect_mes(qq, arg0, things)) {
+                        if (new GetFromBmob(usu_handler).connect_mes(qq, arg0, things)) {
                             things_send.setText("");
                         } else {
                             Toast.makeText(MainActivity.this, "发送失败", Toast.LENGTH_LONG).show();
@@ -160,42 +162,14 @@ public class MainActivity extends Activity {
                 }
             }
         });
-        new GetFromBmob().getcardmes(getWindow().getDecorView());
 
-        Handler mHandler = new Handler();
-        mHandler.postDelayed(new Runnable() {
+        //获取打卡列表
+        new GetFromBmob(usu_handler).getcardmes(getWindow().getDecorView());
 
-            @Override
-            public void run() {
-
-                CardMesDatabaseHelper dbHelper = new CardMesDatabaseHelper(MainActivity.this, "CardMes.db", null, 1);
-                SQLiteDatabase db = dbHelper.getWritableDatabase();
-                Cursor cursor = db.query("CardMarkMes", null, null, null, null, null, null);
-                if (cursor.moveToLast()) {
-                    int pos = cursor.getPosition();
-                    int i = Integer.parseInt(cursor.getString(cursor.getColumnIndex("num")));
-                    Log.d("qqqq", "i " + i + "pos" + pos);
-                    cursor.moveToPosition(pos - i);
-                    i = 0;
-                    do {
-                        String num = cursor.getString(cursor.getColumnIndex("num"));
-                        if (Integer.parseInt(num) < i) break;
-                        i++;
-                        String content = cursor.getString(cursor.getColumnIndex("content"));
-                        String user = cursor.getString(cursor.getColumnIndex("user"));
-                        renew_list(user, content);
-                        Log.d("nummmmm:", num);
-                    } while (cursor.moveToNext());
-                }
-
-                cursor.close();
-                db.close();
-
-            }
-        }, 2500);//延迟2.5s..就第一次加载图片的时候TUT别打我。。汪汪。。下手轻点
 
         //获取今日打卡话题
-        String topic = new AboutTopic().getTopic(getWindow().getDecorView());
+        new AboutTopic(usu_handler).getTopic(getWindow().getDecorView());
+        //System.out.println("null " + topic);
         init();
     }
 
@@ -210,7 +184,8 @@ public class MainActivity extends Activity {
                     JSONObject data = arg0.optJSONObject("data");
                     // CardMark things = new CardMark();
 
-                    renew_list(data.optString("user"), data.optString("content"));
+                    // renew_list(data.optString("user"), data.optString("content"));
+                    new NetworkUtil(usu_handler).getHttpBitmap(data.optString("user"), getWindow().getDecorView(), data.optString("content"), 2);
                     //Toast.makeText(MainActivity.this,data.toString(),Toast.LENGTH_LONG).show();
                 }
 
@@ -329,6 +304,7 @@ public class MainActivity extends Activity {
                         //finish();
                         break;
                 }
+
             }
         });
         iv_icon.setOnClickListener(new OnClickListener() {
@@ -389,9 +365,9 @@ public class MainActivity extends Activity {
                                             System.out.println(QQ);
 
                                             //获取名称
-                                            String name = new NetworkUtil().get_QQ_Name(QQ);
+                                            String name = new NetworkUtil(usu_handler).get_QQ_Name(QQ);
                                             //获取图片
-                                            Bitmap header = new NetworkUtil().get_QQ_Header(QQ);
+                                            Bitmap header = new NetworkUtil(usu_handler).get_QQ_Header(QQ);
                                             Bundle bundle = new Bundle();
                                             bundle.putString("name", name);
                                             bundle.putParcelable("header", header);
@@ -501,60 +477,59 @@ public class MainActivity extends Activity {
                     String topic = data.getString("topic");
                     idea.setText(topic);
                     break;
-            }
-        }
-    };
+                case 3:
+                    CardMesDatabaseHelper dbHelper = new CardMesDatabaseHelper(MainActivity.this, "CardMes.db", null, 1);
+                    SQLiteDatabase db = dbHelper.getWritableDatabase();
+                    Cursor cursor = db.query("CardMarkMes", null, null, null, null, null, null);
+                    if (cursor.moveToLast()) {
+                        int pos = cursor.getPosition();
+                        int i = Integer.parseInt(cursor.getString(cursor.getColumnIndex("num")));
+                        Log.d("qqqq", "i " + i + "pos" + pos);
+                        cursor.moveToPosition(pos - i);
+                        i = 0;
+                        do {
+                            String num = cursor.getString(cursor.getColumnIndex("num"));
+                            if (Integer.parseInt(num) < i) break;
+                            i++;
+                            String content = cursor.getString(cursor.getColumnIndex("content"));
+                            String user = cursor.getString(cursor.getColumnIndex("user"));
 
+                            //renew_list(user, content);
+                            new NetworkUtil(usu_handler).getHttpBitmap(user, getWindow().getDecorView(), content, Integer.parseInt(num));
+                            Log.d("nummmmm:", num + content + "user:" + user);
+                        } while (cursor.moveToNext());
+                    }
 
+                    cursor.close();
+                    db.close();
+                    break;
+                case 4:
 
-    public void renew_list(String user, String content) {
-
-        things_for_v = new CardMark();
-        things_for_v.setContent(content);
-        userId.add(user);
-        user_path = "/sdcard/Morning/pic/users/" + user + "/head.png";
-
-        Boolean flag = new NetworkUtil().getHttpBitmap(user, getWindow().getDecorView());
-        if (BitmapFactory.decodeFile(user_path) == null) {
-            Handler mHandler = new Handler();
-            mHandler.postDelayed(new Runnable() {
-
-                @Override
-                public void run() {
-
+                    Bundle data4 = msg.getData();
+                    String userid = data4.getString("user");
+                    String content = data4.getString("content");
+                    things_for_v = new CardMark();
+                    things_for_v.setContent(content);
+                    userId.add(userid);
+                    user_path = "/sdcard/Morning/pic/users/" + userid + "/head.png";
+                    Log.d("GETVIEW111", "userid " + userid);
                     if (BitmapFactory.decodeFile(user_path) == null || things_for_v.getContent().equals("")) {
 
                         Log.d("GETVIEW", "getView: null");
                     } else {
-                        Log.d("1", "onDataChange: ff" + user_path);
+                        Log.d("1yes", "onDataChange: ff" + user_path);
                         user_ic.add(BitmapFactory.decodeFile(user_path));
-                        Log.d("2", "onDataChange: ff" + user_ic);
+                        Log.d("2yes", "onDataChange: ff" + user_ic);
                         //things_for_v.setUser(new GetFromBmob().get_muser(data.optString("qq_number"),getWindow().getDecorView()));
                         messages.add(things_for_v);
                         adapter.notifyDataSetChanged();
                     }
-
-                }
-            }, 2000);//延迟2s..就第一次加载图片的时候TUT别打我。。汪汪。。下手轻点
-
-
-            Log.d("notexist", "onDataChange: ff" + user_ic);
-        } else {
-            if (BitmapFactory.decodeFile(user_path) == null || things_for_v.getContent().equals("")) {
-
-                Log.d("GETVIEW", "getView: null");
-            } else {
-                Log.d("1yes", "onDataChange: ff" + user_path);
-                user_ic.add(BitmapFactory.decodeFile(user_path));
-                Log.d("2yes", "onDataChange: ff" + user_ic);
-                //things_for_v.setUser(new GetFromBmob().get_muser(data.optString("qq_number"),getWindow().getDecorView()));
-                messages.add(things_for_v);
-                adapter.notifyDataSetChanged();
+                    Log.d("exist", "onDataChange: ff" + user_ic);
+                    break;
             }
-            Log.d("exist", "onDataChange: ff" + user_ic);
-
         }
-    }
+    };
+
 
     private class MyAdapter extends BaseAdapter {
 
